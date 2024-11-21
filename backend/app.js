@@ -31,3 +31,5 @@ app.use('/api/books', require('./routes/book'));
 app.get('/', (req, res) => {
     res.send('API is running')
 })
+
+module.exports = app;

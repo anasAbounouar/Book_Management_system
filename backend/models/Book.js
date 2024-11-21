@@ -27,10 +27,10 @@ const BookSchema = new mongoose.Schema(
             unique:true,
             trim:true,
         },
-        coverImage: {
-            type: String, // Url to image
+        // coverImage: {
+        //     type: String, // Url to image
             
-        },
+        // },
         description: {
             type: String,
             

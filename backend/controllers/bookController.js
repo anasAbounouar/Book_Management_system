@@ -1,64 +1,67 @@
 const Book = require('../models/Book');
 
+// Create a new book
 exports.createBook = async (req, res) => {
-    
-    const { title, author, genre, isbn, description, available } = req.body;
+    const { title, author, genre, isbn, description, available, coverImage } = req.body;
     try {
         // Check if the book with the same ISBN already exists
-        let book = await Book.findOne({ isbn })
+        let book = await Book.findOne({ isbn });
         if (book) {
-            return res.status(400).json({ msg: 'BOOk with this isbn already exists' });
-
+            return res.status(400).json({ msg: 'Book with this ISBN already exists' });
         }
 
-
-
-
-        // create a new book instance 
-        book = Book({
-            title, author, genre, isbn, description, available: available == undefined ? true : available, coverImage: coverImageUrl,
-            
+        // Create a new book instance
+        book = new Book({
+            title,
+            author,
+            genre,
+            isbn,
+            description,
+            available: available === undefined ? true : available,
+            coverImage,
         });
 
         await book.save();
-        res.status(201).json(book)
+        res.status(201).json(book);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
     }
+};
 
-    
-    
-}
-// get single book by ID
-
+// Get a single book by ID
 exports.getBookById = async (req, res) => {
-
     try {
         const book = await Book.findById(req.params.id);
         if (!book) {
-            return res.status(404).json({ msg: " book not Found" });
-
+            return res.status(404).json({ msg: "Book not found" });
         }
+        res.json(book);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ msg: "Book not found" });
+        }
+        res.status(500).send('Server error');
+    }
+};
+exports.getBooks = async (req, res) => {
+    try {
+        const books = await Book.find().sort({ createdAt: -1 });
+        res.json(books);
+
 
     } catch (err) {
         console.error(err.message);
-        if (err.kind == 'ObjectId') {
-            return res.status(404).json({ msg: "Book Not Found" });
-        }
-        res.status(500).send('server error');
-
-
+        res.status(500).send('Server Error ');
+        
     }
-    
-
 }
-
-// update book bye id
-
+// Update a book by ID
 exports.updateBook = async (req, res) => {
     const { title, author, genre, isbn, description, available } = req.body;
     const bookFields = {};
+
     if (title) bookFields.title = title;
     if (author) bookFields.author = author;
     if (genre) bookFields.genre = genre;
@@ -66,10 +69,10 @@ exports.updateBook = async (req, res) => {
     if (description) bookFields.description = description;
     if (available) bookFields.available = available;
 
-    
     try {
-        let book = await  Book.findById(req.params.id);
-        if (!book) return res.status(404).json({ msg: 'Book not Found' });
+        let book = await Book.findById(req.params.id);
+        if (!book) return res.status(404).json({ msg: 'Book not found' });
+
         book = await Book.findByIdAndUpdate(
             req.params.id,
             { $set: bookFields },
@@ -78,31 +81,23 @@ exports.updateBook = async (req, res) => {
         res.json(book);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('server error')
+        res.status(500).send('Server error');
     }
-}
+};
 
-//delete book bye id
-
+// Delete a book by ID
 exports.deleteBook = async (req, res) => {
-    const id = req.params.id
-    
+    const id = req.params.id;
 
     try {
         let book = await Book.findById(id);
         if (!book) {
-            return res.status(404).json({ msg: "Book  Not Found" });
-
-
+            return res.status(404).json({ msg: "Book not found" });
         }
         await Book.findByIdAndDelete(id);
         res.json({ msg: 'Book removed' });
-
-
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
-        
     }
-}
-
+};

@@ -25,16 +25,16 @@ router.get('/', getBooks)
 // @desc    Get  book by id
 // @access  Public 
 
-router.get('/', getBookById)
+router.get('/:id', getBookById)
 // @route   PUT /api/books/:id
 // @desc    Update a book by ID
 // @access  Public (Change to Private with authentication if needed)
-router.post('/:id', updateBook)
+router.put('/:id', updateBook)
 
 // @route   DELETE /api/books/:id
 // @desc    Delete a book by ID
 // @access  Public (Change to Private with authentication if needed)
-router.post('/:id', deleteBook)
+router.delete('/:id', deleteBook)
 
 
 
