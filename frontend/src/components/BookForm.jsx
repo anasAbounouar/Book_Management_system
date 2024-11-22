@@ -2,148 +2,116 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import { Button, TextField, Box, FormControlLabel, Checkbox, Typography } from '@mui/material';
 
 const BookForm = ({ fetchBooks, existingBook, onClose }) => {
-    const defaultBook = {
-        title: '',
-        author: '',
-        genre: '',
-        isbn: '',
-        description: '',
-        available: true,
-    };
-    const [book, setBook] = useState(defaultBook);
-    
-    useEffect(() => {
-        if (existingBook) {
-            setBook(existingBook);
-        } 
-    }, [existingBook]);
-    
-  
-    useEffect(() => {
-        if (existingBook) {
-            setBook({
-                title: existingBook.title,
-                author: existingBook.author,
-                genre: existingBook.genre,
-                isbn: existingBook.isbn,
-                description: existingBook.description,
-                available: existingBook.available,
-            });
-        } else {
-            setBook({
-                title: '',
-                author: '',
-                genre: '',
-                isbn: '',
-                description: '',
-                available: true,
-            });
-        }
-    }, [existingBook]);
-    
+  const defaultBook = {
+    title: '',
+    author: '',
+    genre: '',
+    isbn: '',
+    description: '',
+    available: true,
+  };
 
-    const handleChange = (e) => {
-        const { value, name, type, checked } = e.target
-        setBook((prevState) => ({
-            ...prevState,
-            [name]:type ==='checkbox'?checked:value,
-        }))
+  const [book, setBook] = useState(defaultBook);
 
-        
+  useEffect(() => {
+    if (existingBook) {
+      setBook(existingBook);
     }
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (existingBook) {
-                await axios.put(`/api/books/${existingBook._id}`, book);
+  }, [existingBook]);
 
-                
-            } else {
-                await axios.post('/api/books', book);
+  const handleChange = (e) => {
+    const { value, name, type, checked } = e.target;
+    setBook((prevState) => ({
+      ...prevState,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
 
-            }
-            fetchBooks();
-            onClose();
-        } catch (err) {
-            console.error(err.message);
-            alert(`Error while saving the book: ${err.message}`);
-
-        }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (existingBook) {
+        await axios.put(`/api/books/${existingBook._id}`, book);
+      } else {
+        await axios.post('/api/books', book);
+      }
+      fetchBooks();
+      onClose();
+    } catch (err) {
+      console.error(err.message);
+      alert(`Error while saving the book: ${err.message}`);
     }
-    return (
-        <div>
-            <h2>{existingBook ? 'Edit Book' : 'create Book'}</h2>
-            <form onSubmit={handleSubmit}>
-        <div>
-          <label>Title:</label><br />
-          <input
-            type="text"
-            name="title"
-            value={book.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Author:</label><br />
-          <input
-            type="text"
-            name="author"
-            value={book.author}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Genre:</label><br />
-          <input
-            type="text"
-            name="genre"
-            value={book.genre}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>ISBN:</label><br />
-          <input
-            type="text"
-            name="isbn"
-            value={book.isbn}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Description:</label><br />
-          <textarea
-            name="description"
-            value={book.description}
-            onChange={handleChange}
-          ></textarea>
-        </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="available"
-              checked={book.available}
-              onChange={handleChange}
-            />
-            Available
-          </label>
-        </div>
-        <button type="submit">{existingBook ? 'Update Book' : 'Add Book'}</button>
-        <button type="button" onClick={onClose} style={{ marginLeft: '10px' }}>
-          Cancel
-        </button>
+  };
+
+  return (
+    <Box sx={{ padding: 2 }}>
+      <Typography variant="h5">{existingBook ? 'Edit Book' : 'Create Book'}</Typography>
+      <form onSubmit={handleSubmit}>
+        <TextField
+          label="Title"
+          name="title"
+          value={book.title}
+          onChange={handleChange}
+          fullWidth
+          required
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="Author"
+          name="author"
+          value={book.author}
+          onChange={handleChange}
+          fullWidth
+          required
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="Genre"
+          name="genre"
+          value={book.genre}
+          onChange={handleChange}
+          fullWidth
+          required
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="ISBN"
+          name="isbn"
+          value={book.isbn}
+          onChange={handleChange}
+          fullWidth
+          required
+          sx={{ marginBottom: 2 }}
+        />
+        <TextField
+          label="Description"
+          name="description"
+          value={book.description}
+          onChange={handleChange}
+          fullWidth
+          multiline
+          rows={4}
+          sx={{ marginBottom: 2 }}
+        />
+        <FormControlLabel
+          control={<Checkbox checked={book.available} onChange={handleChange} name="available" />}
+          label="Available"
+        />
+        <Box sx={{ marginTop: 2 }}>
+          <Button variant="contained" color="primary" type="submit" sx={{ marginRight: 2 }}>
+            {existingBook ? 'Update Book' : 'Add Book'}
+          </Button>
+          <Button variant="outlined" onClick={onClose} color="secondary">
+            Cancel
+          </Button>
+        </Box>
       </form>
-        </div>
-    )
-    
-}
+    </Box>
+  );
+};
 
-export default  BookForm 
+export default BookForm;
+    

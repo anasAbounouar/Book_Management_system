@@ -18,14 +18,14 @@ exports.createBook = async (req, res) => {
             isbn,
             description,
             available: available === undefined ? true : available,
-            coverImage,
+           
         });
 
         await book.save();
         res.status(201).json(book);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).send('Server error in Creation');
     }
 };
 
@@ -42,7 +42,7 @@ exports.getBookById = async (req, res) => {
         if (err.kind === 'ObjectId') {
             return res.status(404).json({ msg: "Book not found" });
         }
-        res.status(500).send('Server error');
+        res.status(500).send('Server error in getting book by id');
     }
 };
 exports.getBooks = async (req, res) => {
@@ -53,8 +53,8 @@ exports.getBooks = async (req, res) => {
 
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error ');
-        
+        res.status(500).send('Server Error in getting books ');
+
     }
 }
 // Update a book by ID
@@ -81,7 +81,7 @@ exports.updateBook = async (req, res) => {
         res.json(book);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).send('Server error in updating');
     }
 };
 
@@ -98,6 +98,6 @@ exports.deleteBook = async (req, res) => {
         res.json({ msg: 'Book removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server error');
+        res.status(500).send('Server error in deletion');
     }
 };
